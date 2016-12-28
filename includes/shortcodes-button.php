@@ -7,7 +7,9 @@ function rescue_shortcodes_media_button( ) {
 
     $title = __( 'Shortcodes', 'rescue-shortcodes' );  ?>
 
-    <a id="thickbox_shortcode_button" class="button thickbox" title="<?php echo esc_attr( $title ); ?>" href="#TB_inline?width=600&height=700&inlineId=thickbox_shortcode_window">
+    <a id="thickbox_shortcode_button" class="button thickbox"
+        title="<?php echo esc_attr( $title ); ?>"
+        href="#TB_inline?width=600&amp;height=700&amp;inlineId=thickbox_shortcode_window">
         <span class="rescue-shortcodes-icon"></span> <?php echo esc_html( $title ); ?>
     </a>
 
