@@ -71,6 +71,11 @@ Copyright: @foodgoesinmouth
 
 == Changelog ==
 
+= 2.6, April 23, 2024 =
+* Tested with WordPress 6.3
+* Improve sanitization
+
+
 = 2.5, April 5, 2019 =
 * Tested with WordPress 5.1.1
 
