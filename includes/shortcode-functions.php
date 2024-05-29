@@ -16,8 +16,7 @@ if( !function_exists('rescue_fix_shortcodes') ) {
 			']<br />'	=> ']'
 		);
 
-		$content = strtr($content, $array);
-		return wp_kses_post( $content );
+		return strtr($content, $array);
 	}
 	add_filter('the_content', 'rescue_fix_shortcodes');
 }
