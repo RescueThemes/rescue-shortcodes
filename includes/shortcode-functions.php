@@ -259,7 +259,7 @@ if (!function_exists('rescue_tabgroup_shortcode')) {
 		    $output .= '<div id="rescue-tab-'. rand(1, 100) .'" class="rescue-tabs">';
 			$output .= '<ul class="ui-tabs-nav rescue-clearfix">';
 			foreach( $tab_titles as $tab ){
-				$output .= '<li><a href="#rescue-tab-'. sanitize_title( $tab[0] ) .'">' . esc_html( $tab[0] ) . '</a></li>';
+				$output .= '<li><a href="#rescue-tab-'. sanitize_title( $tab[0] ) .'">' . wp_kses_post( $tab[0] ) . '</a></li>';
 			}
 		    $output .= '</ul>';
 		    $output .= do_shortcode( $content );
@@ -279,7 +279,7 @@ if (!function_exists('rescue_tab_shortcode')) {
 				'visibility'	=> 'all',
 				), $atts );
 		
-		$title = sanitize_text_field( $atts['title'] );
+		$title = wp_kses_post( $atts['title'] );
 		$class = sanitize_text_field( $atts['class'] );
 		$visibility = sanitize_html_class( $atts['visibility'] );
 		
@@ -315,7 +315,7 @@ if (!function_exists('rescue_donation_tabgroup_shortcode')) {
 			$output .= '<ul class="ui-tabs-nav rescue-clearfix">';
 			foreach( $tab_titles as $tab ){
 
-				$output .= '<li><a href="#rescue-tab-'. sanitize_title( $tab[0] ) .'"><span>' . esc_html( $tab[0] ) . '</span></a></li>';
+				$output .= '<li><a href="#rescue-tab-'. sanitize_title( $tab[0] ) .'"><span>' . wp_kses_post( $tab[0] ) . '</span></a></li>';
 			}
 		    $output .= '</ul>';
 		    $output .= '<div class="rescue_donation_header"> '. $group_title .' </div>';

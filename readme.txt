@@ -7,7 +7,7 @@ Tags: shortcodes, buttons, columns, tabs, animations, spacing, highlight
 Requires at least: 4.0
 Tested up to: 6.5
 
-Stable tag: 2.7
+Stable tag: 2.8
 
 A lightweight WordPress shortcodes plugin.
 
@@ -70,6 +70,10 @@ MIT License - https://github.com/imakewebthings/waypoints/blob/master/licenses.t
 Copyright: @foodgoesinmouth
 
 == Changelog ==
+
+= 2.8, May 30, 2024 =
+
+* Allow html in toggle titles.
 
 = 2.7, May 29, 2024 =
 * Tested with WordPress 6.5
