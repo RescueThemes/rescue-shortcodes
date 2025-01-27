@@ -182,7 +182,7 @@ if( !function_exists('rescue_box_shortcode') ) {
 		$content = wp_kses_post( $content );
 
 	    $alert_content = '';
-	    $alert_content .= '<div class="rescue-box ' . esc_attr( $color ) . ' '. esc_attr( $float ).' '. esc_attr( $class ) .' rescue-'. esc_attr( $visibility ) .'" style="text-align:'. $text_align .'; width:'. $width .';'. $style_attr .'">';
+	    $alert_content .= '<div class="rescue-box ' . esc_attr( $color ) . ' '. esc_attr( $float ).' '. esc_attr( $class ) .' rescue-'. esc_attr( $visibility ) .'" style="text-align:'. esc_attr( $text_align ) .'; width:'. $width .';'. $style_attr .'">';
 	    $alert_content .= ' '. do_shortcode($content) .'</div>';
 	    return $alert_content;
 	}
@@ -232,7 +232,7 @@ if( !function_exists('rescue_toggle_shortcode') ) {
 		
 		$content = wp_kses_post( $content );
 
-		return '<div class="rescue-toggle '. esc_attr( $class ) .' rescue-'. esc_attr( $visibility ) .'"><h3 class="rescue-toggle-trigger">'. $title .'</h3><div class="rescue-toggle-container">' . do_shortcode($content) . '</div></div>';
+		return '<div class="rescue-toggle '. esc_attr( $class ) .' rescue-'. esc_attr( $visibility ) .'"><h3 class="rescue-toggle-trigger">'.esc_html( $title ) .'</h3><div class="rescue-toggle-container">' . do_shortcode($content) . '</div></div>';
 	}
 	add_shortcode('rescue_toggle', 'rescue_toggle_shortcode');
 }
@@ -287,7 +287,7 @@ if (!function_exists('rescue_tab_shortcode')) {
 		
 		$content = wp_kses_post( $content );
 		
-	    return '<div id="rescue-tab-'. sanitize_title( $title ) .'" class="tab-content '. esc_attr( $class ) .' rescue-'. esc_attr( $visibility ) .'"><p>'. do_shortcode( $content ) .'</p></div>';
+	    return '<div id="rescue-tab-'. esc_html( $title ) .'" class="tab-content '. esc_attr( $class ) .' rescue-'. esc_attr( $visibility ) .'"><p>'. do_shortcode( $content ) .'</p></div>';
 	}
 	add_shortcode( 'rescue_tab', 'rescue_tab_shortcode' );
 }
@@ -322,7 +322,7 @@ if (!function_exists('rescue_donation_tabgroup_shortcode')) {
 				$output .= '<li><a href="#rescue-tab-'. sanitize_title( $tab[0] ) .'"><span>' . wp_kses_post( $tab[0] ) . '</span></a></li>';
 			}
 		    $output .= '</ul>';
-		    $output .= '<div class="rescue_donation_header"> '. $group_title .' </div>';
+		    $output .= '<div class="rescue_donation_header"> '. esc_html( $group_title ) .' </div>';
 		    $output .= do_shortcode( $content );
 		    $output .= '</div><!-- .rescue-donation-tabs .tabs-bottom -->';
 		} else {
@@ -379,7 +379,7 @@ if( !function_exists('rescue_progressbar_shortcode') ) {
 		
 		// Display the accordion	';
 		$output = '<div class="rescue-progressbar rescue-clearfix '. esc_attr( $class ) .' rescue-'. esc_attr( $visibility ) .'" data-percent="'. $percentage .'%">';
-			if ( $title !== '' ) $output .= '<div class="rescue-progressbar-title" style="background: '. esc_attr( $color ) .';"><span>'. $title .'</span></div>';
+			if ( $title !== '' ) $output .= '<div class="rescue-progressbar-title" style="background: '. esc_attr( $color ) .';"><span>'. esc_html( $title ) .'</span></div>';
 			$output .= '<div class="rescue-progressbar-bar" style="background: '. esc_attr( $color ) .';"></div>';
 			if ( $show_percent == 'true' ) {
 				$output .= '<div class="rescue-progress-bar-percent">'.$percentage.'%</div>';
@@ -422,16 +422,17 @@ if (! function_exists( 'rescue_shortcode_googlemaps' ) ) :
 		$visibility = sanitize_html_class( $atts['visibility'] );
 		$key = sanitize_text_field( $atts['key'] );
 		
+		
 		// Load Google API key if provided. Google requires new site to use API
 		$api_key = ! empty( $key ) ? '&key=' . $key : '';
 
-		wp_enqueue_script('rescue_googlemap_api', 'https://maps.googleapis.com/maps/api/js?sensor=false' . $api_key , array('jquery'), '1.0', true );
+		wp_enqueue_script('rescue_googlemap_api', 'https://maps.googleapis.com/maps/api/js?sensor=false' . esc_attr( $api_key ) , array('jquery'), '1.0', true );
 
 
-
+		$content = "";
 		$output = '<div id="map_canvas_'.rand(1, 100).'" class="googlemap '. esc_attr( $class ) .' rescue-'. esc_attr( $visibility ) .'" style="height:'.$height.'px;width:100%">';
-			$output .= (!empty($title)) ? '<input class="title" type="hidden" value="'.$title.'" />' : '';
-			$output .= '<input class="location" type="hidden" value="'.$location.'" />';
+			$output .= (!empty($title)) ? '<input class="title" type="hidden" value="'.esc_html( $title ).'" />' : '';
+			$output .= '<input class="location" type="hidden" value="'. esc_attr($location ).'" />';
 			$output .= '<input class="zoom" type="hidden" value="'.$zoom.'" />';
 			$output .= '<div class="map_canvas"></div>';
 		$output .= '</div>';
@@ -478,7 +479,7 @@ if (! function_exists( 'RescueFontAwesome' ) ) :
 	    $animated = ($animated) ? 'fa-spin' : '';
 	    $color = ($color) ? ''.$color. '' : '';
 
-	    $theAwesomeFont = '<i style="color:'. esc_attr( $color) .'" class="fa '.$type.' '.$size.' '.$rotate.' '.$flip.' '.$pull.' '.$animated.'"></i>';
+	    $theAwesomeFont = '<i style="color:'. esc_attr( $color) .'" class="fa '.esc_attr( $type ).' '.esc_attr( $size ).' '.esc_attr( $rotate ).' '.esc_attr( $flip ).' '.esc_attr( $pull ).' '. esc_attr( $animated ).'"></i>';
 
 	    return $theAwesomeFont;
 	}
@@ -519,7 +520,7 @@ if (! function_exists( 'RescueButtonIcon' ) ) :
 	    $icon_animated = ($icon_animated) ? 'fa-spin' : '';
 	    $icon_color = ($icon_color) ? ''.$icon_color. '' : '';
 
-	    $theAwesomeFont = '<i style="color:'. esc_attr( $icon_color ).'; margin-right:'.$icon_margin.'"  class="fa '.$icon_type.' '.$icon_size.' '.$icon_rotate.' '.$icon_flip.' '.$icon_pull.' '.$icon_animated.'"></i>';
+	    $theAwesomeFont = '<i style="color:'. esc_attr( $icon_color ).'; margin-right:'.esc_attr( $icon_margin ).'"  class="fa '.esc_attr( $icon_type ).' '.esc_attr( $icon_size ).' '.esc_attr( $icon_rotate ).' '.esc_attr( $icon_flip ).' '. esc_attr( $icon_pull ).' '. esc_attr( $icon_animated ).'"></i>';
 
 	    return $theAwesomeFont;
 	}
@@ -556,7 +557,7 @@ if (! function_exists( 'rescue_animate_shortcode' ) ) :
 	    $delay = ($delay) ? ''.$delay. '' : '';
 	    $iteration = ($iteration) ? ''.$iteration. '' : '';
 
-	    $rescue_animate = '<div class="wow '. esc_attr( $type ).'" data-wow-duration="'. esc_attr( $duration ).'" data-wow-offset="'. esc_attr( $offset ).'" data-wow-delay="'. esc_attr( $delay ).'" data-wow-iteration="'.esc_attr( $iteration ).'">' . do_shortcode($content) . '</div>';
+	    $rescue_animate = '<div class="wow '. esc_attr( $type ).'" data-wow-duration="'. esc_attr( $duration ).'" data-wow-offset="'. esc_attr( $offset ).'" data-wow-delay="'. esc_attr( $delay ).'" data-wow-iteration="'.esc_attr( $iteration ).'">' . do_shortcode( $content ) . '</div>';
 
 	    return $rescue_animate;
 	}
