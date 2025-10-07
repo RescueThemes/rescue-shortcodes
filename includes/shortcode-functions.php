@@ -243,7 +243,9 @@ if( !function_exists('rescue_toggle_shortcode') ) {
 if (!function_exists('rescue_tabgroup_shortcode')) {
 	function rescue_tabgroup_shortcode( $atts, $content = null ) {
 		
-		$content = wp_kses_post( $content );
+		$content = wp_kses( $content, rescue_allowed_tab_html() );
+
+		// $content = wp_kses_post( $content );
 		
 		//Enque scripts
 		wp_enqueue_script('jquery-ui-tabs');
@@ -255,13 +257,15 @@ if (!function_exists('rescue_tabgroup_shortcode')) {
 		$tab_titles = array();
 		if( isset($matches[1]) ){ $tab_titles = $matches[1]; }
 		
-		
 		$output = '';
 		if( count($tab_titles) ){
 		    $output .= '<div id="rescue-tab-'. rand(1, 100) .'" class="rescue-tabs">';
 			$output .= '<ul class="ui-tabs-nav rescue-clearfix">';
 			foreach( $tab_titles as $tab ){
-				$output .= '<li><a href="#rescue-tab-'. sanitize_title( $tab[0] ) .'">' . wp_kses_post( $tab[0] ) . '</a></li>';
+				$title_raw   = wp_kses_post( $tab[0] );
+				$sanitized_title = strtolower( sanitize_title_with_dashes( $title_raw ) );
+
+				$output .= '<li><a href="#rescue-tab-'. esc_attr( $sanitized_title ) .'">' . wp_kses_post( $title_raw ) . '</a></li>';
 			}
 		    $output .= '</ul>';
 		    $output .= do_shortcode( $content );
@@ -281,13 +285,14 @@ if (!function_exists('rescue_tab_shortcode')) {
 				'visibility'	=> 'all',
 				), $atts );
 		
-		$title = wp_kses_post( $atts['title'] );
-		$class = sanitize_html_class( $atts['class'] );
-		$visibility = sanitize_html_class( $atts['visibility'] );
+		$title_raw   = wp_kses_post( $atts['title'] );
+		$class       = sanitize_html_class( $atts['class'] );
+		$visibility  = sanitize_html_class( $atts['visibility'] );
+		$content = wp_kses( $content, rescue_allowed_tab_html() );
+				
+		$sanitized_title = strtolower( sanitize_title_with_dashes( $title_raw ) );
 		
-		$content = wp_kses_post( $content );
-		
-	    return '<div id="rescue-tab-'. esc_html( $title ) .'" class="tab-content '. esc_attr( $class ) .' rescue-'. esc_attr( $visibility ) .'"><p>'. do_shortcode( $content ) .'</p></div>';
+	    return '<div id="rescue-tab-'. esc_attr( $sanitized_title ) .'" class="tab-content '. esc_attr( $class ) .' rescue-'. esc_attr( $visibility ) .'"><p>'. do_shortcode( $content ) .'</p></div>';
 	}
 	add_shortcode( 'rescue_tab', 'rescue_tab_shortcode' );
 }
@@ -298,7 +303,7 @@ if (!function_exists('rescue_tab_shortcode')) {
 if (!function_exists('rescue_donation_tabgroup_shortcode')) {
 	function rescue_donation_tabgroup_shortcode( $atts, $content = null ) {
 
-		$content = wp_kses_post( $content );
+		$content = wp_kses( $content, rescue_allowed_tab_html() );
 		
 		$atts = shortcode_atts( array(
 				'group_title' => '',
@@ -317,9 +322,10 @@ if (!function_exists('rescue_donation_tabgroup_shortcode')) {
 		if( count($tab_titles) ){
 		    $output .= '<div id="rescue-tab-'. rand(1, 100) .'" class="rescue-donation-tabs tabs-bottom">';
 			$output .= '<ul class="ui-tabs-nav rescue-clearfix">';
-			foreach( $tab_titles as $tab ){
-
-				$output .= '<li><a href="#rescue-tab-'. sanitize_title( $tab[0] ) .'"><span>' . wp_kses_post( $tab[0] ) . '</span></a></li>';
+			foreach( $tab_titles as $tab ){				
+				$title_raw   = wp_kses_post( $tab[0] );
+				$sanitized_title = strtolower( sanitize_title_with_dashes( $title_raw ) );
+			    $output .= '<li><a href="#rescue-tab-'. esc_attr( $sanitized_title ) .'"><span>' . wp_kses_post( $title_raw ) . '</span></a></li>';
 			}
 		    $output .= '</ul>';
 		    $output .= '<div class="rescue_donation_header"> '. esc_html( $group_title ) .' </div>';
@@ -340,12 +346,14 @@ if (!function_exists('rescue_donation_tab_shortcode')) {
 				'visibility'	=> 'all',
 				), $atts );
 		
-		$title = sanitize_text_field( $atts['title'] );
+		$title_raw   = wp_kses_post( $atts['title'] );
 		$class = sanitize_html_class( $atts['class'] );
 		$visibility = sanitize_html_class( $atts['visibility'] );
 		
-		$content = wp_kses_post( $content );
-		return '<div id="rescue-tab-'. sanitize_title( $title ) .'" class="tab-content '. esc_attr( $class ) .' rescue-'. esc_attr( $visibility ) .'"><p>'. do_shortcode( $content ) .'</p></div>';
+		$sanitized_title = strtolower( sanitize_title_with_dashes( $title_raw ) );
+		$content = wp_kses( $content, rescue_allowed_tab_html() );
+
+		return '<div id="rescue-tab-'. esc_attr( $sanitized_title ) .'" class="tab-content '. esc_attr( $class ) .' rescue-'. esc_attr( $visibility ) .'"><p>'. do_shortcode( $content ) .'</p></div>';
 	}
 	add_shortcode( 'rescue_donation_tab', 'rescue_donation_tab_shortcode' );
 }
@@ -367,9 +375,7 @@ if( !function_exists('rescue_progressbar_shortcode') ) {
 		// Enque scripts
 		wp_enqueue_script('rescue_progressbar');
 		wp_enqueue_script('rescue_waypoints');
-		
-		
-		
+				
 		$title = sanitize_text_field( $atts['title'] );
 		$percentage = intval( $atts['percentage'] );
 		$color = sanitize_text_field( $atts['color'] );
@@ -437,9 +443,10 @@ if (! function_exists( 'rescue_shortcode_googlemaps' ) ) :
 			$output .= '<div class="map_canvas"></div>';
 		$output .= '</div>';
 
-		return $output;
-
+		// return $output; // Removed v3.2 
+		return "";
 	}
+	
 	add_shortcode("rescue_googlemap", "rescue_shortcode_googlemaps");
 endif;
 
@@ -508,6 +515,8 @@ if (! function_exists( 'RescueButtonIcon' ) ) :
 		$icon_margin = sanitize_html_class( $atts['icon_margin'] );
 		$icon_animated = sanitize_html_class( $atts['icon_animated'] );
 		$icon_color = sanitize_text_field( $atts['icon_color'] );
+		$icon_pull = sanitize_html_class( $atts['pull'] );
+
 		
 		// load scripts
 		wp_enqueue_style('font_awesome');
@@ -564,3 +573,56 @@ if (! function_exists( 'rescue_animate_shortcode' ) ) :
 
 	add_shortcode('rescue_animate', 'rescue_animate_shortcode');
 endif;
+
+/**
+* Define a list of allowed HTML tags for content
+*/
+if (! function_exists( 'rescue_allowed_tab_html' ) ) :
+
+function rescue_allowed_tab_html() {
+	return array(
+		'a' => array(
+			'href' => true,
+			'title' => true,
+			'target' => true,
+			'rel' => true,
+			'class' => true,
+		),
+		'iframe' => array(
+			'src' => true,
+			'width' => true,
+			'height' => true,
+			'frameborder' => true,
+			'allow' => true,
+			'allowfullscreen' => true,
+		),
+		'p' => array(
+			'class' => true,
+			'style' => true,
+		),
+		'br' => true,
+		'em' => true,
+		'strong' => true,
+		'span' => array(
+			'class' => true,
+			'style' => true,
+		),
+		'div' => array(
+			'class' => true,
+			'style' => true,
+		),
+		'ul' => array( 'class' => true, 'style' => true ),
+		'ol' => array( 'class' => true, 'style' => true ),
+		'li' => array( 'class' => true, 'style' => true ),
+		'img' => array(
+			'src' => true,
+			'alt' => true,
+			'width' => true,
+			'height' => true,
+			'class' => true,
+			'style' => true,
+		),
+	);
+}
+endif;
+
